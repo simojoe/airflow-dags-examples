@@ -1,7 +1,7 @@
 from airflow import DAG
 from datetime import datetime, timedelta
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from airflow.contrib.operators.http_operator import SimpleHttpOperator
+from airflow.operators.http import SimpleHttpOperator
 from airflow.operators.dummy_operator import DummyOperator
 
 default_args = {
