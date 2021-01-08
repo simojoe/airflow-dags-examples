@@ -47,7 +47,6 @@ start_callback = SimpleHttpOperator(
         "query": mutation,
         "variables": variables
     },
-    name="start_callback",
     task_id="start_callback",
     dag=dag
 )
