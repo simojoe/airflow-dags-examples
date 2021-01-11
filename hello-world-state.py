@@ -41,7 +41,7 @@ mutation = """
 
 
 start_callback = SimpleHttpOperator(
-    http_conn_id="apar_graphql"
+    http_conn_id="apar_graphql",
     endpoint="http://127.0.0.1:8000/graphql/",
     method="POST",
     data={
