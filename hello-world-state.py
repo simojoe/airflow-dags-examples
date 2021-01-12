@@ -46,6 +46,7 @@ start_callback = SimpleHttpOperator(
     http_conn_id="apar_graphql",
     endpoint="graphql/",
     method="POST",
+    headers={"Content-Type": "application/json"},
     data=json.dumps({
         "query": mutation,
         "variables": variables
