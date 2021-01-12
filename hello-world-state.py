@@ -4,6 +4,8 @@ from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOpera
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.providers.http.operators.http import SimpleHttpOperator
 
+import json
+
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
@@ -44,10 +46,10 @@ start_callback = SimpleHttpOperator(
     http_conn_id="apar_graphql",
     endpoint="graphql/",
     method="POST",
-    data={
+    data=json.dumps({
         "query": mutation,
         "variables": variables
-    },
+    }),
     task_id="start_callback",
     dag=dag
 )
