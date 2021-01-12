@@ -47,10 +47,10 @@ start_callback = SimpleHttpOperator(
     endpoint="graphql/",
     method="POST",
     headers={"Content-Type": "application/json"},
-    data=json.dump({
+    data=json.dumps({
         "query": mutation,
         "variables": variables
-    }),
+    }).encode("utf-8"),
     task_id="start_callback",
     dag=dag
 )
