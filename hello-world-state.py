@@ -40,42 +40,41 @@ mutation = """
     }
 """
 
-with dag:
-    job_id = '{{ dag_run.conf["job_id"] }}'
-    start_callback = SimpleHttpOperator(
-        http_conn_id="apar_graphql",
-        endpoint="graphql/",
-        method="POST",
-        headers={"Content-Type": "application/json"},
-        data=json.dumps({
-            "query": mutation,
-            "variables": {
-                "jobId": job_id,
-                "status": "RUNNING"
-            }
-        }).encode("utf-8"),
-        task_id="start_callback",
-        dag=dag
-    )
+job_id = dag.conf["job_id"]
+start_callback = SimpleHttpOperator(
+    http_conn_id="apar_graphql",
+    endpoint="graphql/",
+    method="POST",
+    headers={"Content-Type": "application/json"},
+    data=json.dumps({
+        "query": mutation,
+        "variables": {
+            "jobId": dag.conf["job_id"],
+            "status": "RUNNING"
+        }
+    }).encode("utf-8"),
+    task_id="start_callback",
+    dag=dag
+)
 
 
-    start = DummyOperator(task_id="start", dag=dag)
+start = DummyOperator(task_id="start", dag=dag)
 
-    passing = KubernetesPodOperator(
-        namespace="airflow",
-        image="python:3.6",
-        cmds=["python","-c"],
-        arguments=["print('hello world')"],
-        labels={"foo": "bar"},
-        name="passing-test",
-        task_id="passing-task",
-        get_logs=True,
-        dag=dag
-    )
+passing = KubernetesPodOperator(
+    namespace="airflow",
+    image="python:3.6",
+    cmds=["python","-c"],
+    arguments=["print('hello world')"],
+    labels={"foo": "bar"},
+    name="passing-test",
+    task_id="passing-task",
+    get_logs=True,
+    dag=dag
+)
 
 
-    end = DummyOperator(task_id="end", dag=dag)
+end = DummyOperator(task_id="end", dag=dag)
 
-    start.set_upstream(start_callback)
-    passing.set_upstream(start)
-    passing.set_downstream(end)
+start.set_upstream(start_callback)
+passing.set_upstream(start)
+passing.set_downstream(end)
