@@ -26,7 +26,7 @@ dag = DAG(
 
 
 variables = {
-    "jobId": {{ dag_run.conf['job_id'] }},
+    "jobId": '{{ dag_run.conf["job_id"] }}',
     "status": "RUNNING"
 }
 
@@ -49,7 +49,10 @@ start_callback = SimpleHttpOperator(
     headers={"Content-Type": "application/json"},
     data=json.dumps({
         "query": mutation,
-        "variables": variables
+        "variables": {
+            "jobId": '{{ dag_run.conf["job_id"] }}',
+            "status": "RUNNING"
+        }
     }).encode("utf-8"),
     task_id="start_callback",
     dag=dag
