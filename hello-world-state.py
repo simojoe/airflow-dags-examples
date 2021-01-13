@@ -26,7 +26,7 @@ dag = DAG(
 
 
 variables = {
-    "jobId": "12121212",
+    "jobId": dag.conf["job_id"],
     "status": "RUNNING"
 }
 
