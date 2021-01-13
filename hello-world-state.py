@@ -4,6 +4,8 @@ from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOpera
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.providers.http.operators.http import SimpleHttpOperator
 
+from ContextedHttpOperator import ExtendedHttpOperator
+
 import json
 
 default_args = {
@@ -40,11 +42,21 @@ mutation = """
     }
 """
 
-start_callback = SimpleHttpOperator(
+
+def get_conf(context):
+    print(context)
+    # return {
+    #     "query": mutation,
+    #     "variables": content.
+    # }
+
+
+start_callback = ExtendedHttpOperator(
     http_conn_id="apar_graphql",
     endpoint="graphql/",
     method="POST",
     headers={"Content-Type": "application/json"},
+    data_fn=get_conf,
     data=json.dumps({
         "query": mutation,
         "variables": {
@@ -55,6 +67,22 @@ start_callback = SimpleHttpOperator(
     task_id="start_callback",
     dag=dag
 )
+
+# start_callback = SimpleHttpOperator(
+#     http_conn_id="apar_graphql",
+#     endpoint="graphql/",
+#     method="POST",
+#     headers={"Content-Type": "application/json"},
+#     data=json.dumps({
+#         "query": mutation,
+#         "variables": {
+#             "jobId": "{{ dag_run.conf['job_id'] }}",
+#             "status": "RUNNING"
+#         }
+#     }), # ).encode("utf-8"),
+#     task_id="start_callback",
+#     dag=dag
+# )
 
 
 start = DummyOperator(task_id="start", dag=dag)
