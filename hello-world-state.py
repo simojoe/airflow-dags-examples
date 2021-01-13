@@ -26,7 +26,7 @@ dag = DAG(
 
 
 variables = {
-    "jobId": "{{ dag_run.conf['job_id'] }}",
+    "jobId": {{ dag_run.conf['job_id'] }},
     "status": "RUNNING"
 }
 
