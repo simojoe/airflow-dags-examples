@@ -43,8 +43,8 @@ mutation = """
 """
 
 
-def get_conf(context):
-    print(context)
+def get_conf(conf):
+    print(conf)
     # return {
     #     "query": mutation,
     #     "variables": content.
