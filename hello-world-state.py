@@ -40,19 +40,18 @@ mutation = """
     }
 """
 
-job_id = dag.conf["job_id"]
 start_callback = SimpleHttpOperator(
     http_conn_id="apar_graphql",
     endpoint="graphql/",
     method="POST",
     headers={"Content-Type": "application/json"},
-    data=json.dumps({
+    data={ # json.dumps({
         "query": mutation,
         "variables": {
-            "jobId": dag.conf["job_id"],
+            "jobId": '{{ dag.conf["job_id"] }}',
             "status": "RUNNING"
         }
-    }).encode("utf-8"),
+    }, # ).encode("utf-8"),
     task_id="start_callback",
     dag=dag
 )
