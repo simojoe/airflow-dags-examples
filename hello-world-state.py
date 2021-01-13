@@ -48,7 +48,7 @@ start_callback = SimpleHttpOperator(
     data={ # json.dumps({
         "query": mutation,
         "variables": {
-            "jobId": '{{ dag.conf["job_id"] }}',
+            "jobId": '{{ dag_run.conf["job_id"] }}',
             "status": "RUNNING"
         }
     }, # ).encode("utf-8"),
