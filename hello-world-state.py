@@ -8,6 +8,7 @@ from ContextedHttpOperator import ExtendedHttpOperator
 
 import json
 
+
 def get_job_status_update_callable(**context):
     dag_run_conf = context["dag_run"].conf
     job_id = dag_run_conf.get("job_id")
@@ -54,6 +55,7 @@ start_callback = ExtendedHttpOperator(
     method="POST",
     headers={"Content-Type": "application/json"},
     data_fn=get_job_status_update_callable,
+    task_id="start_callback",
     dag=dag
 )
 
