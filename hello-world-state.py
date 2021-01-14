@@ -47,7 +47,7 @@ default_args = {
 dag = DAG(
     "kubernetes_hello_world_state", 
     default_args=default_args, 
-    schedule_interval=timedelta(minutes=10)
+    schedule_interval=None
 )
 
 
