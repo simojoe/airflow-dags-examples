@@ -14,15 +14,18 @@ class ExtendedHttpOperator(SimpleHttpOperator):
   @apply_defaults
   def __init__(self, 
             data_fn,
+            http_conn_id,
             *args, **kwargs):
     super(ExtendedHttpOperator, self).__init__(*args, **kwargs)
     if not callable(data_fn):
         raise AirflowException('`data_fn` param must be callable')
     self.data_fn = data_fn
+    self.http_conn_id = http_conn_id
     self.context = None
 
   def execute(self, context):
     self.context = context          
+    print('This is http_conn_id ', self.http_conn_id)
     http = HttpHook(self.method, http_conn_id=self.http_conn_id)
 
     data_result = self.execute_callable(context)
