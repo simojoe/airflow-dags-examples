@@ -8,6 +8,20 @@ from ContextedHttpOperator import ExtendedHttpOperator
 
 import json
 
+def get_callable(**context):
+    dag_run_conf = json.loads(context["dag_run"].conf)
+    print(dag_run_conf)
+    print(type(dag_run_conf))
+    job_id = dag_run_conf.get("job_id")
+
+    return json.dumps({
+        "query": mutation,
+        "variables": {
+            "jobId": job_id,
+            "status": "RUNNING"
+        }
+    })
+
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
@@ -43,29 +57,19 @@ mutation = """
 """
 
 
-def get_conf(**kwargs):
-    for arg in kwargs:
-        print(arg)
-    # print(conf)
-    # return {
-    #     "query": mutation,
-    #     "variables": content.
-    # }
-
-
 start_callback = ExtendedHttpOperator(
     http_conn_id="apar_graphql",
     endpoint="graphql/",
     method="POST",
     headers={"Content-Type": "application/json"},
-    data_fn=get_conf,
-    data=json.dumps({
-        "query": mutation,
-        "variables": {
-            "jobId": "{{ dag_run.conf['job_id'] }}",
-            "status": "RUNNING"
-        }
-    }), # ).encode("utf-8"),
+    data_fn=get_callable,
+    # data=json.dumps({
+    #     "query": mutation,
+    #     "variables": {
+    #         "jobId": "{{ dag_run.conf['job_id'] }}",
+    #         "status": "RUNNING"
+    #     }
+    # }), # ).encode("utf-8"),
     task_id="start_callback",
     dag=dag
 )
