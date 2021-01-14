@@ -6,10 +6,11 @@ from airflow.providers.http.operators.http import SimpleHttpOperator
 
 from ContextedHttpOperator import ExtendedHttpOperator
 
+from functools import partial
 import json
 
 
-def get_job_status_update_callable(**context):
+def get_job_status_update_callable(status, **context):
     dag_run_conf = context["dag_run"].conf
     job_id = dag_run_conf.get("job_id")
 
@@ -26,9 +27,10 @@ def get_job_status_update_callable(**context):
         """,
         "variables": {
             "jobId": job_id,
-            "status": "RUNNING"
+            "status": status
         }
     })
+
 
 
 default_args = {
@@ -54,7 +56,7 @@ start_callback = ExtendedHttpOperator(
     endpoint="graphql/",
     method="POST",
     headers={"Content-Type": "application/json"},
-    data_fn=get_job_status_update_callable,
+    data_fn=partial(get_job_status_update_callable, "RUNNING"),
     task_id="start_callback",
     dag=dag
 )
