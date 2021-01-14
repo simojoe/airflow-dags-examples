@@ -25,7 +25,6 @@ class ExtendedHttpOperator(SimpleHttpOperator):
 
   def execute(self, context):
     self.context = context          
-    print('This is http_conn_id ', self.http_conn_id)
     http = HttpHook(self.method, http_conn_id=self.http_conn_id)
 
     data_result = self.execute_callable(context)

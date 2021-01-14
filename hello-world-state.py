@@ -9,7 +9,8 @@ from ContextedHttpOperator import ExtendedHttpOperator
 import json
 
 def get_callable(**context):
-    dag_run_conf = json.loads(context["dag_run"].conf)
+    # dag_run_conf = json.loads(context["dag_run"].conf)
+    dag_run_conf = context["dag_run"].conf
     print(dag_run_conf)
     print(type(dag_run_conf))
     job_id = dag_run_conf.get("job_id")
