@@ -61,8 +61,27 @@ start_callback = ExtendedHttpOperator(
     dag=dag
 )
 
+completed_callback = ExtendedHttpOperator(
+    http_conn_id="apar_graphql",
+    endpoint="graphql/",
+    method="POST",
+    headers={"Content-Type": "application/json"},
+    data_fn=partial(get_job_status_update_callable, "COMPLETED"),
+    task_id="completed_callback",
+    dag=dag
+)
 
-start = DummyOperator(task_id="start", dag=dag)
+failed_callback = ExtendedHttpOperator(
+    http_conn_id="apar_graphql",
+    endpoint="graphql/",
+    method="POST",
+    headers={"Content-Type": "application/json"},
+    data_fn=partial(get_job_status_update_callable, "FAILED"),
+    task_id="failed_callback",
+    dag=dag,
+    trigger_rule="all_failed".
+)
+
 
 passing = KubernetesPodOperator(
     namespace="airflow",
@@ -77,8 +96,5 @@ passing = KubernetesPodOperator(
 )
 
 
-end = DummyOperator(task_id="end", dag=dag)
-
-start.set_upstream(start_callback)
-passing.set_upstream(start)
-passing.set_downstream(end)
+with dag:
+    start_callback >> passing >> [completed_callback, failed_callback]
