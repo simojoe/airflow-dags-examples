@@ -8,20 +8,27 @@ from ContextedHttpOperator import ExtendedHttpOperator
 
 import json
 
-def get_callable(**context):
-    # dag_run_conf = json.loads(context["dag_run"].conf)
+def get_job_status_update_callable(**context):
     dag_run_conf = context["dag_run"].conf
-    print(dag_run_conf)
-    print(type(dag_run_conf))
     job_id = dag_run_conf.get("job_id")
 
     return json.dumps({
-        "query": mutation,
+        "query": """
+            mutation jobUpdateStatus($jobId: ID!, $status: String!) {
+            jobUpdateStatus(input: { jobId: $jobId, status: $status }) {
+                job {
+                id
+                status
+                }
+            }
+            }
+        """,
         "variables": {
             "jobId": job_id,
             "status": "RUNNING"
         }
     })
+
 
 default_args = {
     "owner": "airflow",
@@ -41,55 +48,14 @@ dag = DAG(
 )
 
 
-# variables = {
-#     "jobId": '{{ dag_run.conf["job_id"] }}',
-#     "status": "RUNNING"
-# }
-
-mutation = """
-    mutation jobUpdateStatus($jobId: ID!, $status: String!) {
-    jobUpdateStatus(input: { jobId: $jobId, status: $status }) {
-        job {
-        id
-        status
-        }
-    }
-    }
-"""
-
-
 start_callback = ExtendedHttpOperator(
     http_conn_id="apar_graphql",
     endpoint="graphql/",
     method="POST",
     headers={"Content-Type": "application/json"},
-    data_fn=get_callable,
-    # data=json.dumps({
-    #     "query": mutation,
-    #     "variables": {
-    #         "jobId": "{{ dag_run.conf['job_id'] }}",
-    #         "status": "RUNNING"
-    #     }
-    # }), # ).encode("utf-8"),
-    task_id="start_callback",
+    data_fn=get_job_status_update_callable,
     dag=dag
 )
-
-# start_callback = SimpleHttpOperator(
-#     http_conn_id="apar_graphql",
-#     endpoint="graphql/",
-#     method="POST",
-#     headers={"Content-Type": "application/json"},
-#     data=json.dumps({
-#         "query": mutation,
-#         "variables": {
-#             "jobId": "{{ dag_run.conf['job_id'] }}",
-#             "status": "RUNNING"
-#         }
-#     }), # ).encode("utf-8"),
-#     task_id="start_callback",
-#     dag=dag
-# )
 
 
 start = DummyOperator(task_id="start", dag=dag)

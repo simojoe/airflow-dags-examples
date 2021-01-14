@@ -35,6 +35,7 @@ class ExtendedHttpOperator(SimpleHttpOperator):
                         data_result,
                         self.headers,
                         self.extra_options)
+    return response.text
 
   def execute_callable(self, context):
     return self.data_fn(**context)
