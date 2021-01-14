@@ -48,7 +48,7 @@ default_args = {
 }
 
 dag = DAG(
-    "kubernetes_hello_world_state", 
+    "kubernetes_hello_world_volume", 
     default_args=default_args, 
     schedule_interval=None
 )
@@ -84,8 +84,6 @@ failed_callback = ExtendedHttpOperator(
     dag=dag,
     trigger_rule="all_failed",
 )
-
-
 
 
 passing = KubernetesPodOperator(
