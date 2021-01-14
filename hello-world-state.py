@@ -79,7 +79,7 @@ failed_callback = ExtendedHttpOperator(
     data_fn=partial(get_job_status_update_callable, "FAILED"),
     task_id="failed_callback",
     dag=dag,
-    trigger_rule="all_failed".
+    trigger_rule="all_failed",
 )
 
 
