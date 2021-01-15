@@ -90,10 +90,10 @@ volume_config = {
     }
 }
 
-test_volume = Volume(name="pvc-data-name", configs=volume_config)
+test_volume = Volume(name="pv-data-name", configs=volume_config)
 
 test_volume_mount = VolumeMount(
-    "pvc-data-name", mount_path="/", sub_path=None, read_only=False)
+    "pv-data-name", mount_path="/", sub_path=None, read_only=False)
 
 passing = KubernetesPodOperator(
     namespace="airflow",
@@ -105,8 +105,8 @@ passing = KubernetesPodOperator(
     task_id="passing-task",
     get_logs=True,
     dag=dag,
-    # volumes=[test_volume],
-    # volume_mounts=[test_volume_mount],
+    volumes=[test_volume],
+    volume_mounts=[test_volume_mount],
 )
 
 
