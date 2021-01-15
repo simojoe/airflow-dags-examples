@@ -105,8 +105,8 @@ passing = KubernetesPodOperator(
     task_id="passing-task",
     get_logs=True,
     dag=dag,
-    volumes=[test_volume],
-    volume_mounts=[test_volume_mount],
+    # volumes=[test_volume],
+    # volume_mounts=[test_volume_mount],
 )
 
 
