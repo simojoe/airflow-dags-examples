@@ -35,7 +35,6 @@ def get_job_status_update_callable(status, **context):
     })
 
 
-
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
@@ -48,8 +47,8 @@ default_args = {
 }
 
 dag = DAG(
-    "kubernetes_hello_world_volume", 
-    default_args=default_args, 
+    "kubernetes_hello_world_volume",
+    default_args=default_args,
     schedule_interval=None
 )
 
@@ -85,19 +84,29 @@ failed_callback = ExtendedHttpOperator(
     trigger_rule="all_failed",
 )
 
+volume_config = {
+    "persistentVolumeClaim": {
+        "claimName": "pvc-data-name"
+    }
+}
+
+test_volume = Volume(name="pvc-data-name", configs=volume_config)
+
+test_volume_mount = VolumeMount(
+    "pvc-data-name", mount_path="/", sub_path=None, read_only=False)
 
 passing = KubernetesPodOperator(
     namespace="airflow",
     image="python:3.6",
-    cmds=["ls","-a"],
+    cmds=["ls", "-a"],
     # arguments=["print('hello world')"],
     labels={"foo": "bar"},
     name="passing-test",
     task_id="passing-task",
     get_logs=True,
     dag=dag,
-    # volume_mounts=[],
-    # volumes=[]
+    volumes=[test_volume],
+    volume_mounts=[test_volume_mount],
 )
 
 
