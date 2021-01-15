@@ -93,12 +93,12 @@ volume_config = {
 test_volume = Volume(name="pv-data-name", configs=volume_config)
 
 test_volume_mount = VolumeMount(
-    "pv-data-name", mount_path="/", sub_path=None, read_only=False)
+    "pv-data-name", mount_path="/home", sub_path=None, read_only=False)
 
 passing = KubernetesPodOperator(
     namespace="airflow",
     image="python:3.6",
-    cmds=["ls", "-a"],
+    cmds=["ls /home/", "-a"],
     # arguments=["print('hello world')"],
     labels={"foo": "bar"},
     name="passing-test",
