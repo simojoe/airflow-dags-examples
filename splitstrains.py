@@ -89,13 +89,21 @@ volume_config = {
 test_volume = Volume(name="pv-data-name", configs=volume_config)
 
 test_volume_mount = VolumeMount(
-    "pv-data-name", mount_path="/home", sub_path=None, read_only=False)
+    "pv-data-name", mount_path="/data", sub_path=None, read_only=False)
 
 
 trimmomatic = KubernetesPodOperator(
     namespace="airflow",
     image="quay.io/biocontainers/trimmomatic:0.35--6",
-    cmds=["trimmomatic", "PE", "-h"],
+    cmds=[
+        "trimmomatic", "PE",
+        "-threads", "1",
+        "data/fastq/SRR6982497_pass_1.fastq.gz",
+        "data/fastq/SRR6982497_pass_2.fastq.gz",
+        "data/fastq/SRR6982497_trimmed1.fastq.gz",
+        "data/fastq/SRR6982497_trimmed2.fastq.gz",
+        "SLIDINGWINDOW:4:15"
+    ],
     name="trimmomatic",
     task_id="trimmomatic",
     get_logs=True,
