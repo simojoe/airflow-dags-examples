@@ -95,7 +95,7 @@ test_volume_mount = VolumeMount(
 trimmomatic = KubernetesPodOperator(
     namespace="airflow",
     image="quay.io/biocontainers/trimmomatic:0.39--0",
-    arguments=[
+    cmds=[
         "trimmomatic", "PE",
         "-threads", "1",
         "data/fastq/SRR6982497_pass_1.fastq.gz",
