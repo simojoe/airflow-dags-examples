@@ -94,7 +94,7 @@ test_volume_mount = VolumeMount(
 
 trimmomatic = KubernetesPodOperator(
     namespace="airflow",
-    image="quay.io/biocontainers/trimmomatic:0.39",
+    image="biocontainers/trimmomatic:v0.38dfsg-1-deb_cv1",
     cmds=[
         "trimmomatic", "PE",
         "-threads", "1",
