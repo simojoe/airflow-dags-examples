@@ -197,4 +197,4 @@ bwa_sampe = KubernetesPodOperator(
 #     start_callback >> fastq_dump >> trimmomatic >> [
 #         completed_callback, failed_callback]
 with dag:
-    start_callback >> [bwa_R2, bwa_R1] >> bwa_sampe >> [completed_callback, failed_callback]
+    start_callback >> fastq_dump >> trimmomatic >> [bwa_R2, bwa_R1] >> bwa_sampe >> [completed_callback, failed_callback]
