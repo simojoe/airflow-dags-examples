@@ -94,7 +94,7 @@ test_volume_mount = VolumeMount(
 
 fastq_dump = KubernetesPodOperator(
     namespace="airflow",
-    image="quay.io/biocontainers/sra-tools:2.10.0--pl526he1b5a44_0 ",
+    image="quay.io/biocontainers/sra-tools:2.10.0--pl526he1b5a44_0",
     cmds=[
         "fastq-dump",
         "--outdir", "fastq",
