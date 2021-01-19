@@ -134,6 +134,49 @@ trimmomatic = KubernetesPodOperator(
     volume_mounts=[test_volume_mount],
 )
 
+bwa_R1 = KubernetesPodOperator(
+    namespace="airflow",
+    image="quay.io/biocontainers/bwa:0.7.17--hed695b0_7",
+    cmds=[
+        "bwa", "aln",
+        "-q", "15",
+        "-t", "6",
+        "-R", "'@RG\tID:mixed\tSM:mixed\tLB:None\tPL:Illumina'"
+        "data/ref/tuberculosis.fna",
+        "data/fastq/SRR6982497_trimmed1_paired.fastq.gz",
+        ">", "data/fastq/SRR6982497_aligned1.fastq.gz",
+    ],    
+    name="bwa_aln_R1",
+    task_id="bwa_aln_R1",
+    get_logs=True,
+    dag=dag,
+    volumes=[test_volume],
+    volume_mounts=[test_volume_mount],
+)
+
+bwa_R2 = KubernetesPodOperator(
+    namespace="airflow",
+    image="quay.io/biocontainers/bwa:0.7.17--hed695b0_7",
+    cmds=[
+        "bwa", "aln",
+        "-q", "15",
+        "-t", "6",
+        "-R", "'@RG\tID:mixed\tSM:mixed\tLB:None\tPL:Illumina'"
+        "data/ref/tuberculosis.fna",
+        "data/fastq/SRR6982497_trimmed2_paired.fastq.gz",
+        ">", "data/fastq/SRR6982497_aligned2.fastq.gz",
+    ],    
+    name="bwa_aln_R2",
+    task_id="bwa_aln_R2",
+    get_logs=True,
+    dag=dag,
+    volumes=[test_volume],
+    volume_mounts=[test_volume_mount],
+)
+
+# with dag:
+#     start_callback >> fastq_dump >> trimmomatic >> [
+#         completed_callback, failed_callback]
 with dag:
-    start_callback >> fastq_dump >> trimmomatic >> [
+    start_callback >> [bwa_R2, bwa_R1] >> [
         completed_callback, failed_callback]
