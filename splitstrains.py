@@ -96,14 +96,15 @@ trimmomatic = KubernetesPodOperator(
     namespace="airflow",
     image="quay.io/biocontainers/trimmomatic:0.39--0",
     cmds=[
-        "trimmomatic", "-version"
-        # "trimmomatic", "PE",
-        # "-threads", "1",
-        # "data/fastq/SRR6982497_pass_1.fastq.gz",
-        # "data/fastq/SRR6982497_pass_2.fastq.gz",
-        # "data/fastq/SRR6982497_trimmed1.fastq.gz",
-        # "data/fastq/SRR6982497_trimmed2.fastq.gz",
-        # "SLIDINGWINDOW:4:15"
+        "trimmomatic", "PE"
+        "-threads", "1",
+        "data/fastq/SRR6982497_pass_1.fastq.gz",
+        "data/fastq/SRR6982497_pass_2.fastq.gz",
+        "data/fastq/SRR6982497_trimmed1_paired.fastq.gz",
+        "data/fastq/SRR6982497_trimmed1_unpaired.fastq.gz",
+        "data/fastq/SRR6982497_trimmed2_paired.fastq.gz",
+        "data/fastq/SRR6982497_trimmed2_unpaired.fastq.gz",
+        "SLIDINGWINDOW:4:15"
     ],
     name="trimmomatic",
     task_id="trimmomatic",
