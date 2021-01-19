@@ -92,6 +92,26 @@ test_volume_mount = VolumeMount(
     "pv-data-name", mount_path="/data", sub_path=None, read_only=False)
 
 
+fastq_dump = KubernetesPodOperator(
+    namespace="airflow",
+    image="quay.io/biocontainers/sra-tools:2.10.9--pl526haddd2b5_0",
+    cmds=[
+        "fastq-dump"
+        "--outdir", "fastq",
+        "--gzip", "--skip-technical",  "--readids",
+        "--read-filter", "pass", "--dumpbase",
+        "--split-3", "--clip",
+        "SRR6982497"
+    ],
+    name="fastq_dump",
+    task_id="fastq_dump",
+    get_logs=True,
+    dag=dag,
+    volumes=[test_volume],
+    volume_mounts=[test_volume_mount],
+)
+
+
 trimmomatic = KubernetesPodOperator(
     namespace="airflow",
     image="quay.io/biocontainers/trimmomatic:0.39--0",
@@ -115,4 +135,5 @@ trimmomatic = KubernetesPodOperator(
 )
 
 with dag:
-    start_callback >> trimmomatic >> [completed_callback, failed_callback]
+    start_callback >> fastq_dump >> trimmomatic >> [
+        completed_callback, failed_callback]
