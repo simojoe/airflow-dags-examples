@@ -97,7 +97,7 @@ fastq_dump = KubernetesPodOperator(
     image="quay.io/biocontainers/sra-tools:2.10.0--pl526he1b5a44_0",
     cmds=[
         "fastq-dump",
-        "--outdir", "fastq",
+        "--outdir", "data/fastq",
         "--gzip", "--skip-technical",  "--readids",
         "--read-filter", "pass", "--dumpbase",
         "--split-3", "--clip",
